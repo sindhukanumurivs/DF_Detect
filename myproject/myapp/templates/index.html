@@ -1,0 +1,1604 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Deepfake Detection</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="/static/vendors/feather/feather.css">
+  <link rel="stylesheet" href="/static/vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="/static/vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="/static/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+  <link rel="stylesheet" href="/static/vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" type="text/css" href="js/select.dataTables.min.css">
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="images/favicon.png" />
+</head>
+<body>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo mr-5" href="index.html">DFDetect</a>
+        <a class="navbar-brand brand-logo-mini" href="index.html">DFD</a>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+          <span class="icon-menu"></span>
+        </button>
+        <ul class="navbar-nav mr-lg-2">
+  <li class="nav-item nav-search d-none d-lg-block">
+    <div class="input-group">
+      <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+        <span class="input-group-text" id="search">
+          <i class="icon-search"></i>
+        </span>
+      </div>
+      <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
+    </div>
+  </li>
+</ul>        <ul class="navbar-nav navbar-nav-right">
+          
+            
+                     <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+              <div class="profile">
+  <div class="profile-default">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"  border: 2px solid #d1d1d1;>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+  </div>
+  <span class="offline"></span>
+</div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+              
+              <span class="dropdown-item">
+                <i class="ti-user text-primary"></i>
+                <span id="username">{{ user.username }}</span>  <!-- Displays logged-in username -->
+              </span>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href={% url 'detect' %}> <!-- Ensure your logout URL is correctly mapped -->
+                <i class="ti-power-off text-primary"></i>
+                Logout
+              </a>
+              
+            </div>
+          </li>
+          
+                  </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <span class="icon-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_settings-panel.html -->
+      <div class="theme-setting-wrapper">
+        <div id="settings-trigger"><i class="ti-settings"></i></div>
+        <div id="theme-settings" class="settings-panel">
+          <i class="settings-close ti-close"></i>
+          <p class="settings-heading">SIDEBAR SKINS</p>
+          <div class="sidebar-bg-options selected" id="sidebar-light-theme"><div class="img-ss rounded-circle bg-light border mr-3"></div>Light</div>
+          <div class="sidebar-bg-options" id="sidebar-dark-theme"><div class="img-ss rounded-circle bg-dark border mr-3"></div>Dark</div>
+          <p class="settings-heading mt-2">HEADER SKINS</p>
+          <div class="color-tiles mx-0 px-4">
+            <div class="tiles success"></div>
+            <div class="tiles warning"></div>
+            <div class="tiles danger"></div>
+            <div class="tiles info"></div>
+            <div class="tiles dark"></div>
+            <div class="tiles default"></div>
+          </div>
+        </div>
+      </div>
+      <div id="right-sidebar" class="settings-panel">
+        <i class="settings-close ti-close"></i>
+        <ul class="nav nav-tabs border-top" id="setting-panel" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="todo-tab" data-toggle="tab" href="#todo-section" role="tab" aria-controls="todo-section" aria-expanded="true">TO DO LIST</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="chats-tab" data-toggle="tab" href="#chats-section" role="tab" aria-controls="chats-section">CHATS</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="setting-content">
+          <div class="tab-pane fade show active scroll-wrapper" id="todo-section" role="tabpanel" aria-labelledby="todo-section">
+            <div class="add-items d-flex px-3 mb-0">
+              <form class="form w-100">
+                <div class="form-group d-flex">
+                  <input type="text" class="form-control todo-list-input" placeholder="Add To-do">
+                  <button type="submit" class="add btn btn-primary todo-list-add-btn" id="add-task">Add</button>
+                </div>
+              </form>
+            </div>
+            <div class="list-wrapper px-3">
+              <ul class="d-flex flex-column-reverse todo-list">
+                <li>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="checkbox" type="checkbox">
+                      Team review meeting at 3.00 PM
+                    </label>
+                  </div>
+                  <i class="remove ti-close"></i>
+                </li>
+                <li>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="checkbox" type="checkbox">
+                      Prepare for presentation
+                    </label>
+                  </div>
+                  <i class="remove ti-close"></i>
+                </li>
+                <li>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="checkbox" type="checkbox">
+                      Resolve all the low priority tickets due today
+                    </label>
+                  </div>
+                  <i class="remove ti-close"></i>
+                </li>
+                <li class="completed">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="checkbox" type="checkbox" checked>
+                      Schedule meeting for next week
+                    </label>
+                  </div>
+                  <i class="remove ti-close"></i>
+                </li>
+                <li class="completed">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="checkbox" type="checkbox" checked>
+                      Project review
+                    </label>
+                  </div>
+                  <i class="remove ti-close"></i>
+                </li>
+              </ul>
+            </div>
+            <h4 class="px-3 text-muted mt-5 font-weight-light mb-0">Events</h4>
+            <div class="events pt-4 px-3">
+              <div class="wrapper d-flex mb-2">
+                <i class="ti-control-record text-primary mr-2"></i>
+                <span>Feb 11 2018</span>
+              </div>
+              <p class="mb-0 font-weight-thin text-gray">Creating component page build a js</p>
+              <p class="text-gray mb-0">The total number of sessions</p>
+            </div>
+            <div class="events pt-4 px-3">
+              <div class="wrapper d-flex mb-2">
+                <i class="ti-control-record text-primary mr-2"></i>
+                <span>Feb 7 2018</span>
+              </div>
+              <p class="mb-0 font-weight-thin text-gray">Meeting with Alisa</p>
+              <p class="text-gray mb-0 ">Call Sarah Graves</p>
+            </div>
+          </div>
+          <!-- To do section tab ends -->
+          <div class="tab-pane fade" id="chats-section" role="tabpanel" aria-labelledby="chats-section">
+            <div class="d-flex align-items-center justify-content-between border-bottom">
+              <p class="settings-heading border-top-0 mb-3 pl-3 pt-0 border-bottom-0 pb-0">Friends</p>
+              <small class="settings-heading border-top-0 mb-3 pt-0 border-bottom-0 pb-0 pr-3 font-weight-normal">See All</small>
+            </div>
+            <ul class="chat-list">
+              <li class="list active">
+                <div class="profile"><img src="images/faces/face1.jpg" alt="image"><span class="online"></span></div>
+                <div class="info">
+                  <p>Thomas Douglas</p>
+                  <p>Available</p>
+                </div>
+                <small class="text-muted my-auto">19 min</small>
+              </li>
+              <li class="list">
+                <div class="profile"><img src="images/faces/face2.jpg" alt="image"><span class="offline"></span></div>
+                <div class="info">
+                  <div class="wrapper d-flex">
+                    <p>Catherine</p>
+                  </div>
+                  <p>Away</p>
+                </div>
+                <div class="badge badge-success badge-pill my-auto mx-2">4</div>
+                <small class="text-muted my-auto">23 min</small>
+              </li>
+              <li class="list">
+                <div class="profile"><img src="images/faces/face3.jpg" alt="image"><span class="online"></span></div>
+                <div class="info">
+                  <p>Daniel Russell</p>
+                  <p>Available</p>
+                </div>
+                <small class="text-muted my-auto">14 min</small>
+              </li>
+              <li class="list">
+                <div class="profile"><img src="images/faces/face4.jpg" alt="image"><span class="offline"></span></div>
+                <div class="info">
+                  <p>James Richardson</p>
+                  <p>Away</p>
+                </div>
+                <small class="text-muted my-auto">2 min</small>
+              </li>
+              <li class="list">
+                <div class="profile"><img src="images/faces/face5.jpg" alt="image"><span class="online"></span></div>
+                <div class="info">
+                  <p>Madeline Kennedy</p>
+                  <p>Available</p>
+                </div>
+                <small class="text-muted my-auto">5 min</small>
+              </li>
+              <li class="list">
+                <div class="profile"><img src="images/faces/face6.jpg" alt="image"><span class="online"></span></div>
+                <div class="info">
+                  <p>Sarah Graves</p>
+                  <p>Available</p>
+                </div>
+                <small class="text-muted my-auto">47 min</small>
+              </li>
+            </ul>
+          </div>
+          <!-- chat tab ends -->
+        </div>
+      </div>
+      <!-- partial -->
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="">
+              <i class="icon-grid menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+         
+          
+          
+          <li class="nav-item">
+                      <a class="nav-link" href="upload_video" >
+                          <i class="icon-video menu-icon"></i>
+                          <span class="menu-title">Video Detection</span>
+                      </a>
+                  </li>
+
+          <li class="nav-item">
+            <a class="nav-link"  href="imagedetect">
+              <i class="icon-image menu-icon"></i>
+              <span class="menu-title">Image Detection</span>
+                         </a>
+            
+          </li>
+<li class="nav-item">
+            <a class="nav-link"  href="imagemetadata" >
+              <i class="icon-columns menu-icon"></i>
+              <span class="menu-title">Image Metadata Analysis</span>
+              
+            </a>
+            
+          </li>
+                    <li class="nav-item">
+            <a class="nav-link"  href="videometa" aria-expanded="false" aria-controls="icons">
+              <i class="icon-ban menu-icon"></i>
+              <span class="menu-title">Video Metadata Analysis</span>
+              <i class="menu-arrow"></i>
+            </a> 
+            
+          </li>
+<li class="nav-item">
+            <a class="nav-link" href={% url 'history' %} aria-expanded="false" aria-controls="auth">
+              <i class="icon-clock menu-icon"></i>
+              <span class="menu-title">History</span>
+                          </a>
+                      </li>
+
+                      <li class="nav-item">
+                        <a class="nav-link" href="#" id="tutorials-link">
+                            <i class="icon-book menu-icon"></i>
+                            <span class="menu-title">Tutorials & Guides</span>
+                        </a>
+                    </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="#" id="about-link">
+                            <i class="icon-file menu-icon"></i>
+                            <span class="menu-title">About</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#" id="report-link">
+                          <i class="icon-paper menu-icon"></i>
+                          <span class="menu-title">Report Issue</span>
+                      </a>
+                  </li>
+                  
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <div class="row">
+                <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+                  <h3 class="font-weight-bold">Welcome</h3>
+                  <h6 class="font-weight-normal mb-0">
+                    AI is actively scanning for deepfake content.
+                    <!--<span class="text-primary">3 suspicious detections!</span>-->
+                  </h6>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <div class="row">
+            <!-- Image Analysis Card -->
+            <div class="col-md-6 grid-margin stretch-card">
+              <div class="card tale-bg">
+                <div class="card-people mt-auto">
+                  <img src="{% static 'images/deepfake-image.jpg' %}" alt="AI Detection">
+                  <div class="d-flex mt-3">
+                    <div>
+                      <h2 class="mb-0 font-weight-normal">
+                        <i class="icon-warning mr-2"></i> 
+                      </h2>
+                      <p class="text-muted"></p>
+                    </div>
+                    <div class="ml-3 deepfake-section">
+                                        </div>                                     
+                  </div>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Key Metrics -->
+            <div class="col-md-6 grid-margin transparent">
+              <div class="row">
+                <div class="col-md-6 mb-4 stretch-card transparent">
+                  <div class="card card-tale">
+                    <div class="card-body">
+                      <p class="mb-4">Deepfake</p>
+                      <p class="fs-30 mb-2">Video</p>
+<p class="fs-30 mb-2">Detection</p>
+                      <p>Accuracy: 89%</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-4 stretch-card transparent">
+                  <div class="card card-dark-blue">
+                    <div class="card-body">
+                      <p class="mb-4">Deepfake</p>
+                      <p class="fs-30 mb-2">Image</p>
+<p class="fs-30 mb-2">Detection</p>
+
+                      <p>Accuracy:91%</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+      
+              <div class="row">
+                <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+                  <div class="card card-light-blue">
+                    <div class="card-body">
+                      <p class="mb-4">Video and Image</p>
+                      <p class="fs-30 mb-2">Metadata</p>
+
+<p class="fs-30 mb-2">Analysis</p>
+                      <p>For mutiple files and download feature</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 stretch-card transparent">
+                  <div class="card card-light-danger">
+                    <div class="card-body">
+                      <p class="mb-4">Video and Image</p>
+                      <p class="fs-30 mb-2">Heatmap</p>
+ <p class="fs-30 mb-2">Analysis</p>
+                      <p>Analyze model training</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Deepfake Statistics -->
+          <div class="row" >
+            <div class="col-md-6 grid-margin stretch-card" >
+              <div class="card">
+                <div class="card-body" style="max-width: 100%; height: 100px; overflow: auto;">
+                  <p class="card-title">Deepfake Trends</p>
+                  <p class="font-weight-500">
+                    AI has identified patterns in deepfake content, showing an increase in altered videos in the past month.
+                  </p>
+                  <div class="d-flex flex-wrap mb-5" >
+                    <div class="mr-5 mt-3">
+                      <p class="text-muted">Most Affected Platform</p>
+                      <h3 class="text-primary fs-30 font-weight-medium">YouTube</h3>
+                    </div>
+                    <div class="mr-5 mt-3">
+                      <p class="text-muted">Deepfake Faces</p>
+                      <h3 class="text-primary fs-30 font-weight-medium">5,789</h3>
+                    </div>
+                    <div class="mr-5 mt-3">
+                      <p class="text-muted">Fake Audio Clips</p>
+                      <h3 class="text-primary fs-30 font-weight-medium">3,490</h3>
+                    </div>
+                    <div class="mt-3">
+                      <p class="text-muted">Total Fraudulent Videos</p>
+                      <h3 class="text-primary fs-30 font-weight-medium">9,002</h3>
+                    </div>
+                    <div class="mr-5 mt-3">
+                      <p class="text-muted">Most Affected Platform</p>
+                      <h3 class="text-primary fs-30 font-weight-medium">Instagram</h3>
+                    </div>
+                    <div class="mr-5 mt-3">
+                      <p class="text-muted">Deepfake Faces</p>
+                      <h3 class="text-primary fs-30 font-weight-medium">4,789</h3>
+                    </div>
+                    <div class="mr-5 mt-3">
+                      <p class="text-muted">Fake Audio Clips</p>
+                      <h3 class="text-primary fs-30 font-weight-medium">2,490</h3>
+                    </div>
+                    <div class="mt-3">
+                      <p class="text-muted">Total Fraudulent Videos</p>
+                      <h3 class="text-primary fs-30 font-weight-medium">7,279</h3>
+                    </div>
+                    
+                  </div>
+                  <canvas id="deepfake-trend-chart"></canvas>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Accuracy Report -->
+            <div class="col-md-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <p class="card-title">Detection Accuracy</p>
+                    <a href="#" class="text-info">View Details</a>
+                  </div>
+                  <p class="font-weight-500">
+                    AI-based detection models are constantly improving to provide higher accuracy in identifying deepfake content.
+                  </p>
+                  <div id="accuracy-legend" class="chartjs-legend mt-4 mb-2" style="height: 30px;"></div>
+                
+                  <canvas id="deepfake-bar-chart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Regional Reports -->
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card position-relative">
+                <div class="card-body">
+                  <div id="detailedReports" class="carousel slide detailed-report-carousel position-static pt-2" data-ride="carousel">
+                    <div class="carousel-inner">
+                      <div class="carousel-item active">
+                        <div class="row">
+                          <div class="col-md-12 col-xl-3 d-flex flex-column justify-content-start">
+                            <div class="ml-xl-4 mt-3">
+                              <p class="card-title">Deepfake Reports</p>
+                              <h1 class="text-primary">Global</h1>
+                              <h3 class="font-weight-500 mb-xl-4 text-primary">Most affected regions</h3>
+                              <p class="mb-2 mb-xl-0">
+                                AI has detected the highest number of deepfake videos in these locations.
+                              </p>
+                            </div>
+                          </div>
+                          <div class="col-md-12 col-xl-9">
+                            <div class="row">
+                              <div class="col-md-6 border-right">
+                                <div class="table-responsive mb-3 mb-md-0 mt-3">
+                                  <table class="table table-borderless report-table">
+                                    <tr>
+                                      <td class="text-muted">United States</td>
+                                      <td class="w-100 px-0">
+                                        <div class="progress progress-md mx-4">
+                                          <div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                      </td>
+                                      <td><h5 class="font-weight-bold mb-0">430%</h5></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="text-muted">India</td>
+                                      <td class="w-100 px-0">
+                                        <div class="progress progress-md mx-4">
+                                          <div class="progress-bar bg-warning" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                      </td>
+                                      <td><h5 class="font-weight-bold mb-0">280%</h5></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="text-muted">UK</td>
+                                      <td class="w-100 px-0">
+                                          <div class="progress progress-md mx-4">
+                                              <div class="progress-bar bg-danger" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                                          </div>
+                                      </td>
+                                      <td><h5 class="font-weight-bold mb-0">303%</h5></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="text-muted">Germany</td>
+                                    <td class="w-100 px-0">
+                                        <div class="progress progress-md mx-4">
+                                            <div class="progress-bar bg-danger" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </td>
+                                    <td><h5 class="font-weight-bold mb-0">142%</h5></td>
+                                </tr>
+                                  </table>
+                                </div>
+                              </div>
+                              <div class="col-md-6 mt-3" style="height: 300px;"> <!-- Fix height -->
+                                <canvas id="region-chart"></canvas>
+                                <div id="region-legend"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    <!--</div>
+                    <a class="carousel-control-prev" href="#detailedReports" role="button" data-slide="prev"></a>
+                    <a class="carousel-control-next" href="#detailedReports" role="button" data-slide="next"></a>
+                  </div>-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById("region-chart").getContext("2d");
+        
+            var regionChart = new Chart(ctx, {
+                type: "pie", // ✅ Pie Chart Type
+                data: {
+                    labels: ["India", "USA", "UK", "Germany"], // Added Germany
+                    datasets: [{
+                        data: [2800, 3500, 1900, 1420], // ✅ Adjusted value for Germany (assuming 1420 cases)
+                        backgroundColor: ["#FFC107", "#28A745", "#DC3545", "#007BFF"], // ✅ Colors for all regions
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // ✅ Ensures proper fit inside the container
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: "top", // ✅ Legend at the top
+                        }
+                    }
+                }
+            });
+        });
+        </script>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById("deepfake-bar-chart").getContext("2d");
+        
+            var deepfakeBarChart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Real", "Deepfake"],
+                    datasets: [
+                        {
+                            label: "Detection Accuracy (%)",
+                            data: [50, 50], // Example values
+                            backgroundColor: ["#4CAF50", "#F44336"], // Green for real, red for deepfake
+                            borderColor: ["#388E3C", "#D32F2F"],
+                            borderWidth: 1,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            min:0,
+                            max: 100,
+ticks: {
+            stepSize: 10, // Ensures clear increments
+        },
+                        },
+                    },
+                },
+            });
+        });
+        </script>
+  <!-- container-scroller -->
+   <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Get the content wrapper
+    const contentWrapper = document.querySelector(".content-wrapper");
+
+    // Function to load content dynamically
+    function loadContent(page) {
+        let content = "";
+
+        if (page === "personal-settings") {
+            content = `
+                <section class="personal-settings">
+                    <h2 class="oka-font">Personal Settings</h2>
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <h3>Theme Mode</h3>
+                            <button id="theme-toggle">Toggle Dark/Light Mode</button>
+                        </div>
+                        <div class="setting-card">
+                            <h3>Change Profile Picture</h3>
+                            <input type="file" id="profile-pic-upload">
+                            <img src="profile.jpg" alt="Profile" class="profile-pic" id="profile-pic-preview">
+                        </div>
+                        <div class="setting-card">
+                            <h3>Change Password</h3>
+                            <form id="change-password-form">
+                                <input type="password" placeholder="Current Password" required>
+                                <input type="password" placeholder="New Password" required>
+                                <input type="password" placeholder="Confirm New Password" required>
+                                <button type="submit">Save Changes</button>
+                            </form>
+                        </div>
+                        
+                    </div>
+                </section>
+                <style>
+                  .oka-font{
+                  font-weight: 500 !important;
+                  padding: 20px 20px 20px 0px;
+                  }
+                    .setting-card {
+                        background-color: white;
+                        padding: 30px;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                        text-align: center;
+                        transition: transform 0.3s, box-shadow 0.3s;
+                        width:350px;
+                    }
+                    .setting-card button, .setting-card input[type="file"] {
+                        width: 100%;
+                        padding: 10px;
+                        border: none;
+                        border-radius: 5px;
+                        background-color: #4B49AC;
+                        color: white;
+                        cursor: pointer;
+                        transition: background-color 0.3s;
+                    }
+                    .settings-grid {
+                        display: grid;
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 20px;
+                    }
+                    form {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                    }
+                        .content-wrapper {
+    background: #F5F7FF;
+    padding: 2.375rem 5.375rem;
+    width: 100%;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+}
+                </style>
+            `;
+        }    
+
+
+
+else if (page === "imagemeta") {
+    content = `
+<section class="metadata-generator">
+    <h2>Image Metadata Generation</h2>
+    <p class="subtitle">Extract comprehensive metadata from your images using our pre-trained models</p>
+    
+    <div class="model-options">
+        <div class="model-card" onclick="selectMetadataModel('exif')">
+            <div class="model-icon">📊</div>
+            <h3>EXIF Analyzer</h3>
+            <p>Extracts camera settings, GPS data, and timestamps</p>
+            <div class="model-meta">
+                <span>Formats: JPEG, PNG</span>
+                <span>Speed: Instant</span>
+            </div>
+        </div>
+        
+        <div class="model-card" onclick="selectMetadataModel('vision')">
+            <div class="model-icon">👁️</div>
+            <h3>Vision AI</h3>
+            <p>Generates descriptive tags and scene analysis</p>
+            <div class="model-meta">
+                <span>AI-Powered</span>
+                <span>Accuracy: 94%</span>
+            </div>
+        </div>
+        
+        <div class="model-card" onclick="selectMetadataModel('forensic')">
+            <div class="model-icon">🔎</div>
+            <h3>Forensic Toolkit</h3>
+            <p>Detects edits, manipulations and hidden data</p>
+            <div class="model-meta">
+                <span>Tamper Detection</span>
+                <span>Technical</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="upload-area" id="metadataUploadArea">
+        <input type="file" id="metadataUpload" accept="image/*" style="display:none;">
+        <label for="metadataUpload" class="upload-btn">
+            <span class="upload-icon">🖼️</span>
+            <span>Upload Image to Analyze</span>
+        </label>
+        <div class="preview-container" id="metadataPreview"></div>
+    </div>
+    
+    <div class="metadata-results" id="metadataResults" style="display:none;">
+        <h3>Metadata Results</h3>
+        <div class="result-tabs">
+            <button class="tab-btn active" onclick="showTab('basic')">Basic</button>
+            <button class="tab-btn" onclick="showTab('technical')">Technical</button>
+            <button class="tab-btn" onclick="showTab('ai')">AI Analysis</button>
+        </div>
+        
+        <div class="tab-content active" id="basic-tab">
+            <pre id="basicMetadata"></pre>
+        </div>
+        <div class="tab-content" id="technical-tab">
+            <pre id="technicalMetadata"></pre>
+        </div>
+        <div class="tab-content" id="ai-tab">
+            <pre id="aiMetadata"></pre>
+        </div>
+    </div>
+</section>
+
+<style>
+.metadata-generator {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.subtitle {
+    color: #666;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.model-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.model-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+}
+
+.model-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.model-card.selected {
+    border-color: #3a86ff;
+    background-color: #f0f7ff;
+}
+
+.model-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.model-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.upload-area {
+    text-align: center;
+    padding: 2rem;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    transition: border-color 0.3s;
+}
+
+.upload-area:hover {
+    border-color: #aaa;
+}
+
+.upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: #3a86ff;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.upload-btn:hover {
+    background: #2667cc;
+}
+
+.upload-icon {
+    font-size: 1.2rem;
+}
+
+.preview-container {
+    margin-top: 1.5rem;
+}
+
+.preview-container img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.metadata-results {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.result-tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1rem;
+}
+
+.tab-btn {
+    padding: 0.5rem 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: #666;
+    position: relative;
+}
+
+.tab-btn.active {
+    color: #3a86ff;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #3a86ff;
+}
+
+.tab-content {
+    display: none;
+    padding: 1rem 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+pre {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 5px;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+</style>
+`;
+        }
+
+
+else if (page === "about") {
+    content = `
+<section class="about">
+    <div class="about-container">
+        <h2 class="about-title">Deepfake Detection Tool</h2>
+        <p class="about-lead">A simple yet powerful solution to identify manipulated media content</p>
+        
+        <div class="use-cases">
+            <h3 class="section-heading">How It Helps</h3>
+            <div class="case-grid">
+                <div class="case-card">
+                    <div class="case-img-container">
+                        <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&h=200" alt="Social media verification">
+                    </div>
+                    <h4>Social Media</h4>
+                    <p>Identify potentially fake viral videos before sharing</p>
+                </div>
+                
+                <div class="case-card">
+                    <div class="case-img-container">
+                        <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&h=200" alt="Financial security">
+                    </div>
+                    <h4>Personal Security</h4>
+                    <p>Detect suspicious video calls that might be scams</p>
+                </div>
+                
+                <div class="case-card">
+                    <div class="case-img-container">
+                        <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&h=200" alt="Content verification">
+                    </div>
+                    <h4>Content Creators</h4>
+                    <p>Verify authenticity of user-generated content</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tech-features">
+            <h3 class="section-heading">Our Technology</h3>
+            <p class="tech-description">We've developed an accessible tool that uses AI to spot telltale signs of deepfakes, helping users make more informed decisions about digital content.</p>
+        </div>
+    </div>
+</section>
+
+<style>
+.about {
+    background-color: #f8fafc;
+    padding: 4rem 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.about-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    text-align: center;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.about-lead {
+    font-size: 1.25rem;
+    color: #64748b;
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+}
+
+.section-heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.section-heading:after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: #3b82f6;
+    margin: 0.5rem auto 0;
+}
+
+.case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.case-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.case-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.case-img-container {
+    height: 200px;
+    overflow: hidden;
+}
+
+.case-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.case-card:hover .case-img-container img {
+    transform: scale(1.05);
+}
+
+.case-card h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    padding: 1.5rem 1.5rem 0.5rem;
+    margin: 0;
+}
+
+.case-card p {
+    font-size: 1rem;
+    color: #64748b;
+    padding: 0 1.5rem 1.5rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.tech-description {
+    font-size: 1.125rem;
+    color: #475569;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+@media (max-width: 768px) {
+    .about-title {
+        font-size: 2rem;
+    }
+    
+    .about-lead {
+        font-size: 1.1rem;
+    }
+    
+    .case-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+`;
+        } else if (page === "tutorials") {
+            content = `
+                <section class="tutorials-guides">
+    <h2>Tutorials &amp; Guides</h2>
+    
+    <div class="tutorial-card">
+        <h4>Step-by-Step Tutorials</h4>
+        <p>Follow these comprehensive tutorials to learn how to use our deepfake detection system effectively.</p>
+        
+        <div class="tutorial-step">
+            <h5>1. Uploading Media</h5>
+            <p>Navigate to the upload section on our website. Select a video or image file and click the "Upload" button. Supported formats include MP4, AVI for videos and JPG, PNG for images.</p>
+        </div>
+        
+        <div class="tutorial-step">
+            <h5>2. Running Deepfake Detection</h5>
+            <p>Once your media is uploaded, click on "Analyze" to start the detection process. Our AI model will process the file and extract relevant facial and motion patterns.</p>
+        </div>
+        
+        <div class="tutorial-step">
+            <h5>3. Interpreting Results</h5>
+            <p>After processing, the system will display a confidence score indicating the likelihood of the media being deepfake. Green indicates real, while red suggests potential manipulation.</p>
+        </div>
+        
+        <div class="tutorial-step">
+            <h5>4. Best Practices</h5>
+            <ul>
+                <li>Use high-quality images/videos for more accurate detection.</li>
+                <li>Avoid excessive compression or artifacts, which can affect results.</li>
+                <li>Compare multiple frames in videos to spot inconsistencies.</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="tutorial-card">
+        <h4>FAQs</h4>
+        <p>Find answers to common questions about detecting deepfakes in videos and images.</p>
+        <div class="faq">
+            <button class="faq-question">What is deepfake detection? <span>+</span></button>
+            <div class="faq-answer">Our system analyzes media files to determine if they have been altered using AI.</div>
+        </div>
+        <div class="faq">
+            <button class="faq-question">How accurate is the detection? <span>+</span></button>
+            <div class="faq-answer">Our model provides a confidence score indicating the likelihood of manipulation.</div>
+        </div>
+        <div class="faq">
+            <button class="faq-question">Can I analyze real-time videos? <span>+</span></button>
+            <div class="faq-answer">Currently, our system only supports pre-recorded media files.</div>
+        </div>
+        <div class="faq">
+            <button class="faq-question">What file formats are supported? <span>+</span></button>
+            <div class="faq-answer">We support MP4, AVI for videos and JPG, PNG for images.</div>
+        </div>
+        <div class="faq">
+            <button class="faq-question">Can deepfake detection be bypassed? <span>+</span></button>
+            <div class="faq-answer">While no detection method is 100% foolproof, our AI continuously improves to detect even the most sophisticated manipulations.</div>
+        </div>
+        <div class="faq">
+            <button class="faq-question">Is my uploaded media stored on the server? <span>+</span></button>
+            <div class="faq-answer">No, all uploaded files are processed temporarily and deleted after analysis for privacy reasons.</div>
+        </div>
+        <div class="faq">
+            <button class="faq-question">How long does the analysis take? <span>+</span></button>
+            <div class="faq-answer">Processing time depends on the file size and complexity but typically takes a few seconds to a minute.</div>
+        </div>
+    </div>
+    
+    <div class="tutorial-card">
+        <h4>Video Demos</h4>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/example" frameborder="0" allowfullscreen></iframe>
+    </div>
+</section>
+
+<style>
+    .tutorials-guides {
+        padding: 40px;
+        background-color: #f8f9fa;
+        font-family: "Inter", sans-serif;
+        max-width: 900px;
+        margin: auto;
+    }
+    
+    .tutorial-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    
+    .tutorial-card h4 {
+        color: #222;
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+    
+    .tutorial-step {
+        background: #ffffff;
+        padding: 15px;
+        border-left: 5px solid #007bff;
+        margin-bottom: 15px;
+        border-radius: 6px;
+    }
+    
+    .tutorial-step h5 {
+        color: #0056b3;
+        font-size: 1.2em;
+        margin-bottom: 8px;
+    }
+    
+    .faq {
+        margin-top: 10px;
+    }
+    
+    .faq-question {
+        width: 100%;
+        background: none;
+        border: none;
+        font-size: 1.1em;
+        cursor: pointer;
+        padding: 10px;
+        text-align: left;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .faq-answer {
+        display: none;
+        padding: 10px;
+        font-size: 0.95em;
+        color: #444;
+        border-top: 1px solid #ddd;
+    }
+    
+    .faq-question span {
+        font-weight: bold;
+    }
+    
+    .faq-question.active + .faq-answer {
+        display: block;
+    }
+</style>
+
+
+    
+`;
+        } 
+ else if (page === "report") {
+    content = `
+        <section class="report-issue">
+    <div class="report-container">
+        <h2 class="section-title">Report an Issue</h2>
+        <p class="section-subtitle style="color:#8b8383;">Help us improve our service by reporting any problems you encounter</p>
+        
+        <form id="issue-form" enctype="multipart/form-data" class="issue-form">
+            <div class="form-group">
+                <input type="text" name="name" placeholder="Your Name" required class="form-input">
+            </div>
+            
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Your Email Address" required class="form-input">
+            </div>
+            
+            <div class="form-group file-upload-group">
+                <input type="file" name="screenshot" id="issue-screenshot" accept="image/*,.pdf,.doc,.docx" required>
+                <label for="issue-screenshot" class="file-upload-label" style="background-color: #d7d9e9; border: 2px dashed #1A4639;
+">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span class="file-upload-text">Upload Screenshot</span>
+                    <span class="file-requirements">(JPEG, PNG - Max 5MB)</span>
+                </label>
+                <div class="file-preview" id="file-preview"></div>
+            </div>
+            
+            <div class="form-group">
+                <textarea name="message" placeholder="Please describe the issue in detail..." rows="5" required class="form-textarea"></textarea>
+            </div>
+            
+            <button type="submit" class="submit-button">
+                <span>Submit Report</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="submit-icon">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </form>
+    </div>
+</section>
+
+<style>
+.report-issue {
+    background-color: #ffffff;
+    padding: 3rem 0;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    color: white;
+}
+
+.report-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    color: #ffffff;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.section-subtitle {
+    color:#8b8383;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.issue-form {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-input, .form-textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #4a4a6a;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #1a1a2e;
+    color: white;
+}
+
+.form-input::placeholder, .form-textarea::placeholder {
+    color: #a1a1c2;
+    opacity: 1;
+}
+
+.form-input:focus, .form-textarea:focus {
+    border-color: #00b4d8;
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
+    outline: none;
+}
+
+.file-upload-group {
+    position: relative;
+}
+
+.file-upload-group input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.file-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+background-color: #9b9ebd;
+    border: 2px dashed #00b4d8;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.file-upload-label:hover {
+    background-color: rgba(0, 180, 216, 0.2);
+    border-color: #48cae4;
+}
+
+.upload-icon {
+    margin-bottom: 1rem;
+    color: #00b4d8;
+}
+
+.file-upload-text {
+    font-weight: 600;
+    color: black;
+    margin-bottom: 0.5rem;
+}
+
+.file-requirements {
+    font-size: 0.9rem;
+    color: #202023;
+}
+
+.file-preview {
+    margin-top: 1rem;
+    display: none;
+    color: white;
+}
+
+.submit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px 20px;
+    background-color: #00b4d8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.submit-button:hover {
+    background-color: #0096c7;
+    transform: translateY(-2px);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+.submit-icon {
+    margin-left: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .report-container {
+        padding: 0 15px;
+    }
+    
+    .issue-form {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+  `;
+
+    // JavaScript to handle submission
+   const form = document.getElementById("issue-form");
+if (form) {
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        const response = await fetch("/submit_report/", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            alert("Issue submitted successfully!");
+            form.reset();
+        } else {
+            alert("Something went wrong. Please try again.");
+        }
+    });
+}
+;
+}
+
+        document.querySelectorAll(".faq-question").forEach(button => {
+          button.addEventListener("click", () => {
+              button.classList.toggle("active");
+              button.nextElementSibling.style.display = 
+                  button.nextElementSibling.style.display === "block" ? "none" : "block";
+          });
+      });
+      
+        // Update the content-wrapper
+        if (contentWrapper) {
+            contentWrapper.innerHTML = content;
+        }
+      }
+
+    // Add event listeners to menu items
+    const personalSettingsLink = document.getElementById("personal-settings-link");
+    const aboutLink = document.getElementById("about-link");
+
+    if (personalSettingsLink) {
+        personalSettingsLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            loadContent("personal-settings");
+        });
+    }
+
+    if (aboutLink) {
+        aboutLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            loadContent("about");
+        });
+    }
+    document.getElementById("tutorials-link").addEventListener("click", function (event) {
+        event.preventDefault();
+        loadContent("tutorials");
+    });
+    document.getElementById("report-link").addEventListener("click", function (event) {
+        event.preventDefault();
+        loadContent("report");
+    });
+ document.getElementById("imagemeta-link").addEventListener("click", function (event) {
+        event.preventDefault();
+        loadContent("imagemeta");
+    });
+
+});
+
+
+
+
+</script>
+
+
+
+
+        <script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('navbar-search-input');
+  const searchIcon = document.getElementById('navbar-search-icon');
+  
+  // Function to handle search
+  function performSearch() {
+    const searchTerm = searchInput.value.trim();
+    if (searchTerm.length > 0) {
+      // Redirect to search page with query parameter
+      window.location.href = `/search/?q=${encodeURIComponent(searchTerm)}`;
+      
+      // Or if you want client-side search:
+      // filterPageContent(searchTerm);
+    }
+  }
+  
+  // Search when Enter key is pressed
+  if (searchInput) {
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+  }
+  
+  // Search when search icon is clicked
+  if (searchIcon) {
+    searchIcon.addEventListener('click', performSearch);
+  }
+});
+
+// Client-side search function example
+function filterPageContent(searchTerm) {
+  const items = document.querySelectorAll('.searchable-item'); // Add this class to searchable elements
+  const term = searchTerm.toLowerCase();
+  
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(term) ? '' : 'none';
+  });
+}
+
+</script>
+
+  <!-- plugins:js -->
+  <script src="/static/vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="/static/vendors/chart.js/Chart.min.js"></script>
+  <script src="/static/vendors/datatables.net/jquery.dataTables.js"></script>
+  <script src="/static/vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+
+
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+
+  <script src="/static/js/template.js"></script>
+ 
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="/static/js/random.js"></script>
+  <script src="/static/js/dashboard.js"></script>
+  <script src="/static/js/Chart.roundedBarCharts.js"></script>
+  <!-- End custom js for this page-->
+</body>
+
+</html>
+

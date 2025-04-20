@@ -1,0 +1,531 @@
+{% block content %}
+{% block extra_css %}
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+  --primary-color: #0d47a1; /* Dark blue */
+  --primary-light: #e3f2fd;
+  --secondary-color: #2e7d32; /* Dark green */
+  --danger-color: #c62828; /* Dark red */
+  --warning-color: #f9a825;
+  --info-color: #1565c0; /* Darker blue */
+  --light-color: #f8f9fa;
+  --dark-color: #212121;
+  --gray-color: #424242;
+  --border-radius: 8px;
+  --font-main: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Base Styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-main);
+  background-color: var(--light-color);
+  color: var(--dark-color);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.page-header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: var(--gray-color);
+  margin: 0.5rem 0 0 0;
+  font-weight: 400;
+}
+
+/* Button Group */
+.btn-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Card Design */
+.card {
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* Table Styles */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--border-radius);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--dark-color);
+  font-size: 0.875rem;
+}
+
+.table thead th {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 500;
+  font-family: var(--font-heading);
+  position: sticky;
+  top: 0;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Border highlighting */
+.table tbody tr.authentic {
+  border-left: 4px solid var(--secondary-color);
+}
+
+.table tbody tr.forged {
+  border-left: 4px solid var(--danger-color);
+}
+
+.table tbody tr.metadata {
+  border-left: 4px solid var(--info-color);
+}
+
+.table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+/* Result badges */
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: var(--font-heading);
+}
+
+.badge-authentic {
+  background-color: rgba(46, 125, 50, 0.1);
+  color: var(--secondary-color);
+}
+
+.badge-forged {
+  background-color: rgba(198, 40, 40, 0.1);
+  color: var(--danger-color);
+}
+
+.badge-metadata {
+  background-color: rgba(21, 101, 192, 0.1);
+  color: var(--info-color);
+}
+
+/* Confidence score */
+.confidence-score {
+  font-weight: 600;
+  font-family: var(--font-heading);
+}
+
+.confidence-authentic {
+  color: var(--secondary-color);
+}
+
+.confidence-forged {
+  color: var(--danger-color);
+}
+
+/* Button Styles */
+.btn {
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+}
+
+.btn-icon {
+  margin-right: 0.5rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0b3d91;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #b71c1c;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid #dadce0;
+  color: var(--gray-color);
+}
+
+.btn-outline:hover {
+  background-color: #f8f9fa;
+}
+
+/* Toast notification */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1100;
+}
+
+.toast {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 1rem;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .btn-group {
+    width: 100%;
+  }
+  
+  .btn-group .btn {
+    flex: 1;
+  }
+  
+  .table thead {
+    display: none;
+  }
+  
+  .table, .table tbody, .table tr, .table td {
+    display: block;
+    width: 100%;
+  }
+  
+  .table tr {
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    position: relative;
+    padding-left: 4px;
+  }
+  
+  .table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    width: calc(50% - 1rem);
+    text-align: left;
+    font-weight: 500;
+    color: var(--gray-color);
+  }
+  
+  .table tbody tr.authentic::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: var(--secondary-color);
+  }
+  
+  .table tbody tr.forged::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: var(--danger-color);
+  }
+  
+  .table tbody tr.metadata::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: var(--info-color);
+  }
+}
+</style>
+{% endblock %}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Detection History</h1>
+            <p class="page-subtitle">Review your past detection and analysis results</p>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-primary" id="exportBtn">
+                <i class="fas fa-download btn-icon"></i> Export CSV
+            </button>
+            <button class="btn btn-danger" id="clearBtn">
+                <i class="fas fa-trash btn-icon"></i> Clear History
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Filename</th>
+                        <th>Result</th>
+                        <th>Confidence</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in history_items %}
+                    <tr class="{% if item.result == 'REAL' or item.result == 'Authentic' %}authentic{% elif item.result == 'FAKE' or item.result == 'Forged' %}forged{% else %}metadata{% endif %}">
+                        <td data-label="Type">{{ item.get_detection_type_display }}</td>
+                        <td data-label="Filename">{{ item.filename|truncatechars:30 }}</td>
+                        <td data-label="Result">
+                            {% if item.result == 'REAL' or item.result == 'Authentic' %}
+                                <span class="badge badge-authentic">{{ item.result }}</span>
+                            {% elif item.result == 'FAKE' or item.result == 'Forged' %}
+                                <span class="badge badge-forged">{{ item.result }}</span>
+                            {% else %}
+                                <span class="badge badge-metadata">{{ item.result }}</span>
+                            {% endif %}
+                        </td>
+                        <td data-label="Confidence">
+                            {% if item.confidence %}
+                                <span class="confidence-score {% if item.result == 'REAL' or item.result == 'Authentic' %}confidence-authentic{% else %}confidence-forged{% endif %}">
+                                    {{ item.confidence }}%
+                                </span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td data-label="Date">{{ item.created_at|date:"M d, Y H:i" }}</td>
+                        <td data-label="Actions">
+                            <button class="btn btn-outline view-details " 
+                                    data-id="{{ item.id }}" id="view-details">
+                                <i class="fas fa-eye btn-icon"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">No history items found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-container">
+    <div class="toast align-items-center" id="exportToast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+    <div class="toast align-items-center" id="clearToast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS (required for modal and toast functionality) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+// Setup AJAX to send CSRF token
+$.ajaxSetup({
+    headers: { 'X-CSRFToken': csrftoken }
+});
+
+$(document).ready(function() {
+    // View Details Button
+    $(document).on('click', '.view-details', function() {
+        var itemId = $(this).data('id');
+        $('#detailsModal').modal('show');
+        
+        $.ajax({
+            url: 'get_history_details/' + itemId + '/',
+            method: 'GET',
+            success: function(data) {
+                $('#modalBodyContent').html(data);
+            },
+            error: function() {
+                $('#modalBodyContent').html(`
+                    <div class="alert alert-danger">
+                        Failed to load details. Please try again.
+                    </div>
+                `);
+            }
+        });
+    });
+
+    // Export Functionality
+    $('#exportBtn').click(function() {
+        // Prepare data for export
+        const exportData = [
+            ['Type', 'Filename', 'Result', 'Confidence', 'Date']
+        ];
+        
+        $('table tbody tr').each(function() {
+            // Skip the empty row if it exists
+            if ($(this).find('td').length === 1) return;
+            
+            const row = [
+                $(this).find('td:nth-child(1)').text().trim(),
+                $(this).find('td:nth-child(2)').text().trim(),
+                $(this).find('td:nth-child(3) span').text().trim(),
+                $(this).find('td:nth-child(4) span').text().trim(),
+                $(this).find('td:nth-child(5)').text().trim()
+            ];
+            exportData.push(row);
+        });
+        
+        // Convert to CSV
+        const csv = Papa.unparse(exportData);
+        
+        // Create download link
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `detection_history_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success toast
+        const toast = new bootstrap.Toast(document.getElementById('exportToast'));
+        toast.show();
+    });
+
+    // Clear History Button
+    $('#clearBtn').click(function() {
+        if (confirm('Are you sure you want to clear all history? This action cannot be undone.')) {
+            $.ajax({
+                url: '{% url "clear_history" %}',
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function() {
+                    // Reload the page to show empty state
+                    location.reload();
+                    // Show success toast
+                    const toast = new bootstrap.Toast(document.getElementById('clearToast'));
+                    toast.show();
+                },
+                error: function() {
+                    alert('Failed to clear history. Please try again.');
+                }
+            });
+        }
+    });
+});
+</script>
+</head>
+{% endblock %}

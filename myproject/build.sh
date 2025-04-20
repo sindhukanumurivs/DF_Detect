@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Exit script on error
+set -e
+
 # Install dependencies
 pip install -r requirements.txt
 

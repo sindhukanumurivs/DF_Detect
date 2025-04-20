@@ -234,7 +234,8 @@ class DeepfakeModel(nn.Module):
 # Load the saved model checkpoint
 # -------------------------------------------
 
-MODEL_CHECKPOINT_PATH = os.path.join(BASE_DIR, 'myapp', 'models', 'model_87_acc_20_frames_final_data.pt')
+MODEL_CHECKPOINT_PATH = os.path.join(BASE_DIR, 'static', 'models', 'model_87_acc_20_frames_final_data.pt')
+
 
 device = torch.device('cpu')  # or torch.device('cuda') if using GPU
 

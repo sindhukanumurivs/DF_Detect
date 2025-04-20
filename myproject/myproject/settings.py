@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
+import dj_database_url
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,18 +21,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w3z!qg$te&b7x3h57d%h%szy^#9=2v#%j)b@1g+n72btz2alf+'
+SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
+
 import os
 
 NGROK_URL = os.getenv("NGROK_URL")  # Set this environment variable dynamically
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://0.0.0.0:80', "https://*.ngrok-free.app", "http://dfdetect.com",# Allow localhost for development
+    'http://0.0.0.0:80', "https://*.ngrok-free.app", "http://dfdetect.com","https://*.onrender.com",# Allow localhost for development
 ]
 
 if NGROK_URL:
@@ -70,7 +72,8 @@ MIDDLEWARE = [
 
      # Required for django-allauth
     'allauth.account.middleware.AccountMiddleware',  
-    
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
@@ -101,10 +104,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+   'default': dj_database_url.config(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 }
 
 
@@ -169,3 +169,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'sindhukvs45@gmail.com'  # Replace with your Gmail
 EMAIL_HOST_PASSWORD = 'oqud bpva kega exci'  # Use an App Password
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

@@ -233,7 +233,7 @@ class DeepfakeModel(nn.Module):
 # -------------------------------------------
 # Load the saved model checkpoint
 # -------------------------------------------
-
+MODEL_DIR = '.'
 MODEL_CHECKPOINT_PATH = os.path.join(MODEL_DIR, 'model_87_acc_20_frames_final_data.pt')
 
 # Google Drive direct download link using file ID

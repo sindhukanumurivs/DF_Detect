@@ -234,7 +234,8 @@ class DeepfakeModel(nn.Module):
 # Load the saved model checkpoint
 # -------------------------------------------
 
-MODEL_CHECKPOINT_PATH = r"C:\Users\sindh\OneDrive\Desktop\Documents\major project\major project\Frontend\newfrontend\myproject\myapp\models\model_87_acc_20_frames_final_data.pt"
+MODEL_CHECKPOINT_PATH = os.path.join(BASE_DIR, 'myapp', 'models', 'model_87_acc_20_frames_final_data.pt')
+
 device = torch.device('cpu')  # or torch.device('cuda') if using GPU
 
 model = DeepfakeModel(num_classes=2)
@@ -837,23 +838,7 @@ def encode_image_to_base64(img):
     return base64.b64encode(buffer).decode("utf-8")
 
 
-def overlayheatmap(image_path, alpha=0.4, target_size=(256, 256)):
-    # Load image and resize to model's expected input size
-    img = load_img(image_path, target_size=target_size)
-    img = img_to_array(img)
-    
-    model=load_model(r"C:\Users\sindh\Downloads\140k_best_model.keras")
-    # Get model prediction
-    img_input = np.expand_dims(img / 255.0, axis=0)  # Normalize and add batch dim
-    prediction = model.predict(img_input)
-    
-    # Ensure prediction is extracted properly for binary classification
-    pred_class = 1 if prediction[0] == 1  else 0
-    pred_prob = float(prediction[0]) if pred_class == 1 else 1 - float(prediction[0])
-    print(prediction)
-    label = 'Authentic' if pred_class == 1 else 'Forged'
-    print(f"Prediction: {label} with {pred_prob * 100:.2f}% confidence")
-    return label,pred_prob*100
+
 
 import cv2
 import numpy as np

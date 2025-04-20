@@ -234,7 +234,16 @@ class DeepfakeModel(nn.Module):
 # Load the saved model checkpoint
 # -------------------------------------------
 
-MODEL_CHECKPOINT_PATH = os.path.join(BASE_DIR, 'static', 'models', 'model_87_acc_20_frames_final_data.pt')
+MODEL_CHECKPOINT_PATH = os.path.join(MODEL_DIR, 'model_87_acc_20_frames_final_data.pt')
+
+# Google Drive direct download link using file ID
+url = 'https://drive.google.com/uc?export=download&id=18yvRVQga1vbzLFgOHYKB8zvKwxe5AE-J'
+
+if not os.path.exists(MODEL_CHECKPOINT_PATH):
+    os.makedirs(MODEL_DIR, exist_ok=True)
+    print("Downloading model from Google Drive...")
+    urllib.request.urlretrieve(url, MODEL_CHECKPOINT_PATH)
+    print("Model download complete.")
 
 
 device = torch.device('cpu')  # or torch.device('cuda') if using GPU

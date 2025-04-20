@@ -291,7 +291,6 @@ iso8601==2.1.0
 isoduration==20.11.0
 itsdangerous==2.1.2
 jaraco.context==5.3.0
-jax==0.4.38
 jaxlib==0.4.38
 jedi==0.19.0
 Jinja2==3.1.2

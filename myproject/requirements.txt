@@ -412,11 +412,6 @@ overrides==7.4.0
 packaging==24.1
 pafy==0.5.5
 pandas==2.1.1
-pandocfilters==1.5.0
-parso==0.8.3
-pathspec==0.10.1
-pickleshare==0.7.5
-pillow==10.2.0
-platformdirs==3.10.0
+
 
 

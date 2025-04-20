@@ -418,5 +418,5 @@ pathspec==0.10.1
 pickleshare==0.7.5
 pillow==10.2.0
 platformdirs==3.10.0
-playsound==1.3.0
+
 

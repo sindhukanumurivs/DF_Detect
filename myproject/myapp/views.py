@@ -300,7 +300,7 @@ def predict_deepfake(faces):
             label="Authentic"
         else:
             label="Forged"
-        confidence = round(random.uniform(0.8, 0.9) * 100, 2)
+        confidence = round(avg_prediction,2)*100
     else:
         label, confidence = "UNKNOWN", 0.0
     print(predictions)

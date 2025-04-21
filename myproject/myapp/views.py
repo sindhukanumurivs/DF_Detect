@@ -744,37 +744,8 @@ def overlay_heatmap(image_path, ip,alpha=0.4, target_size=(256, 256)):
     # Load image and resize to model's expected input size
     img = load_img(image_path, target_size=target_size)
     img = img_to_array(img)
-    filename = ip.lower()  # Convert to lowercase for case insensitivity
-    import random
-    import re
-
     
-
-    # Extract numbers from filename
-    numbers = re.findall(r'\d+', filename)
-    print(filename)
-    print(numbers)
-    
-    if "fake"  in filename  or "f" in filename:
-        pred_class = 0  # Fake
-        print("C")
-    elif "real"  in filename  or "r" in filename:
-        pred_class = 1
-        print("D")# Real
-    elif numbers:
-        last_number = int(numbers[-1])  # Take the last number found
-        if last_number % 2 == 1:  # If the number is odd
-            pred_class = 0
-            print("A")# Fake
-        else:
-            pred_class = 1
-            print("B")
     else:
-        pred_class=0
-        print("E")
-    pred_prob = round(random.uniform(70, 85), 2) / 100
-    formatted_prob = f"{pred_prob*100:.2f}"
-    """else:
     # Get model prediction
         img_input = np.expand_dims(img / 255.0, axis=0)  # Normalize and add batch dim
         prediction = model.predict(img_input)
@@ -782,7 +753,7 @@ def overlay_heatmap(image_path, ip,alpha=0.4, target_size=(256, 256)):
         # Ensure prediction is extracted properly for binary classification
         pred_class = 1 if prediction[0] == 1  else 0
         pred_prob = float(prediction[0]) if pred_class == 1 else 1 - float(prediction[0])
-        print(prediction)"""
+        print(prediction)
     label = 'Authentic' if pred_class == 1 else 'Forged'
     print(f"Prediction: {label} with {pred_prob * 100:.2f}% confidence")
     return label,formatted_prob
@@ -902,8 +873,8 @@ def imagedetect(request):
                 preprocessed_image = tf.expand_dims(preprocessed_image, axis=0) 
             class_idx = 1
 
-            #model = load_model("/content/sample_data/140k_best_model.keras", compile=False)
-            #heatmap = grad_cam(model, preprocessed_image, class_idx, target_layer_name)
+            model = load_model("/content/sample_data/140k_best_model.keras", compile=False)
+            heatmap = grad_cam(model, preprocessed_image, class_idx, target_layer_name)
             label,confidence=overlay_heatmap(image_path,ip)
 
             reprocessed_image = preprocess_img(image_path)
